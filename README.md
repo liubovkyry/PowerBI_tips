@@ -130,3 +130,38 @@ SELECTCOLUMNS(
     )
     ```
     In the preceding scenario, we used a virtual table to create a calculated table. In the following scenario, we demonstrate the usage of virtual tables in a measure.
+
+ ####  Using virtual tables in a measure – Part 1
+
+Create a measure in the Internet Sales table to calculate the quantities ordered for products when their list price is higher than $1,000. Name the measure Orders with List Price Bigger than or Equal to $1,000:
+
+```
+Orders with List Price Bigger than or Equal to $1,000 =
+CALCULATE(
+    SUM('Internet Sales'[OrderQuantity])
+        , FILTER('Product' //Virtual table start
+            , 'Product'[List Price]>=1000
+                ) //Virtual table end
+        )
+```
+
+ - We created a virtual table using the FILTER() function on top of the Product table to get only the products with a List Price value bigger than or equal to $1,000. All columns from the Product tables are available in this virtual table, which lives in memory. It is only available within the Orders with List Price Bigger than or Equal to $1,000 measure and nowhere else in the data model.
+ - The SUM() function then calculates the summation of the OrderQuantity from the Internet Sales table.
+ 
+ #### Using virtual tables in a measure – Part 2
+ 
+Using the same sample file used in the previous scenario, create a measure in the Internet Sales table to calculate quantities that the customers ordered more than 4 products with a list price bigger than $1,000. Name the measure Order Qty for Customers Buying More than 4 Products with List Price Bigger Than $1,000.
+
+To solve this scenario, we need to create a virtual table of customers with more than 4 orders for products that cost more than $1,000. The following code will take care of that:
+
+```
+Order Qty for Customers Buying More than 4 Product with List Price Bigger Than $1,000 =
+SUMX(
+    FILTER(
+        VALUES(Customer[CustomerKey]) //Virtual table
+        , [Orders with List Price Bigger than or Equal $1,000] > 4
+        )
+    , [Orders with List Price Bigger than or Equal $1,000]
+    )
+    
+ ```
