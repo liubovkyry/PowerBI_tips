@@ -46,3 +46,23 @@ Some related questions we might ask the business to optimize the performance of 
  Excel: Excel files with many formulas can be tricky data sources.
  - Does the business require you to analyze all the data contained in the all sheets? We may be able to exclude some of those sheets.
  - How often are the formulas edited? This is critical as modifying the formulas can easily break the data processing in Power Query and generate errors. It is best to replicate the Excel formulas in Power BI and load the raw data from Excel before the formulas are applied.
+
+#### Star schema (dimensional modeling) and snowflaking
+First things first, the star schema and dimensional modeling are the same things. In Power BI data modeling, the term star schema is more commonly used. The following sections are generic reminders about some star schema concepts.
+
+#### Transactional modeling versus star schema modeling
+In transactional systems, the main goal is improving the solution’s performance in creating new records and updating/deleting existing ones. So, when designing transactional systems, it is essential to go through the normalization process to decrease data redundancy and increase data entry performance by breaking the tables down into master-detail tables.
+
+But the goal of a business analysis system is very different. In a business analysis solution, we need a data model optimized for querying in the most performant way.
+
+Let us continue with a scenario. Suppose we have a transactional retail system for an international retail shop. We have hundreds of transactions every second from different parts of the world. The company owners want to see the total sales in the past 6 months.
+
+This calculation sounds easy. It is just a simple SUM of sales. But wait, we have hundreds of transactions every second, right? If we have 100 transactions per second, then we have 8,640,000 transactions a day. So, for 6 months of data, we have more than 1.5 billion rows. Therefore, a simple SUM of sales takes a reasonable amount of time to process.
+
+Now, the business raises a new request. The company owners now want to see the total sales in the past 6 months by country and city. They simply want to know what the best-selling cities are.
+
+We need to add another condition to our simple SUM calculation, which translates into a join to the geography table. For those coming from a relational database design background, it is trivial that joins are relatively expensive operations. This scenario can go on and on. So, you can imagine how quickly a simple scenario turns into a rather tricky situation.
+
+In the star schema, however, we already joined all those tables based on business entities. We aggregated and loaded the data into denormalized tables. In the preceding scenario, the business is not interested in seeing every transaction at the second level. So, summarizing the data at the day level decreases the row count from 1.5 billion to approximately 18,000 rows for the 6 months. Now you can imagine how fast the summation would run over 18,000 instead of 1.5 billion rows.
+
+The idea of the star schema is to keep all numeric values in separate tables called fact tables and put all descriptive information into other tables called dimension tables. Usually, the fact tables are surrounded by dimensions explaining the facts. A data model with a fact table in the middle surrounded by dimensions looks like a star, which is why this modeling approach is called a star schema.
