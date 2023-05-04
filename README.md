@@ -179,3 +179,22 @@ As stated earlier, we can use all DAX functions that return a table value to cre
 
 ![image](https://user-images.githubusercontent.com/118057504/236339075-966246ee-7424-43bf-b08a-db0b83f4c110.png)
 
+### Using DAX Studio
+DAX Studio is one of the most popular third-party tools, created by the amazing team at SQLBI, available to download for free. You can get it from the tool's official website (https://daxstudio.org/). You can easily use DAX Studio to see the results of your virtual tables. First of all, you need to open your Power BI file (*.pbix) before you can connect to it from DAX Studio. Open DAX Studio and follow these steps:
+
+ - Click PBI/SSDT Model.
+ - Select a desired Power BI Desktop instance.
+ - Type in the EVALUATE statement, then copy and paste the Virtual Table part of the calculation on a new line:
+```
+EVALUATE
+FILTER('Product' //Virtual table start
+            , 'Product'[List Price]>=1000
+                ) //Virtual table end
+```   
+
+ - Press F5 or click the Run button to run the query:
+ - ![image](https://user-images.githubusercontent.com/118057504/236340475-465e7c7d-8b5e-42a8-9f9d-f36d0332be24.png)
+ - In DAX Studio, you can run DAX queries, which must start with the EVALUATE statement.
+
+#### Time intelligence and data modeling
+
