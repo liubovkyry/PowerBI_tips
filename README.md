@@ -1,4 +1,5 @@
 # Expert Data Modeling with Power BI - Second Edition
+## Introduction to Data Modeling in Power BI
 
 ### Understanding the Power BI layers
 
@@ -102,3 +103,30 @@ Demonstrating the business logic in basic data visualizations
 As we are modeling the data, we do not need to worry about data visualization. Confirming with the business SMEs (Subject Matter Experts) is the fastest way to ensure all the reporting logic is correct. The fastest way to get confirmation from SMEs is to demonstrate the logic in the simplest possible way, such as using table and matrix visuals and some slicers on the page. When demonstrating the solution to SMEs, do not forget to highlight that the visualization is only to confirm the reporting logic with them and not the actual product delivery. In the real world, we have many new discussions and surprises during the demonstration sessions, which usually means we are at the beginning of the second iteration, so we start gathering information about the required changes and the new requirements, if any.
 
 We gradually become professional data modelers as we go through the preceding steps several times. This book also follows an iterative approach, so we go back and forth between different chapters to cover some scenarios.
+
+## Data Analysis eXpressions (DAX)
+
+### Understanding virtual tables
+Whenever we use a DAX function that results in a table of values, we are creating a virtual table.
+When generating or loading the data from other tables, taking some table operations and loading the results into a calculated table, we probably created a virtual table first, then populated the calculated table with the results. 
+
+#### Creating a calculated table
+We want to create a calculated table and name it Sequential Numbers with an ID column. The ID column values are sequential numbers between 1 and 20, increasing by one step in each row:
+
+ - Open a new Power BI Desktop instance.
+ - Click New table from the Modeling tab.
+ - Type the following DAX expression, then press Enter:
+
+```Sequential Numbers = GENERATESERIES(1, 20, 1)
+```
+The GENERATESERIES() function generates values for us. The output is a desirable table, but we need to do one last operation to rename the Values column to ID.
+
+- Replace the previous expression with the following expression, then press Enter:
+```Sequential Numbers =
+SELECTCOLUMNS(
+    GENERATESERIES(1, 20, 1)
+    , "ID"
+    , [Value]
+    )
+    ```
+    In the preceding scenario, we used a virtual table to create a calculated table. In the following scenario, we demonstrate the usage of virtual tables in a measure.
