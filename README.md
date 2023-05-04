@@ -119,16 +119,19 @@ We want to create a calculated table and name it Sequential Numbers with an ID c
 
 ```Sequential Numbers = GENERATESERIES(1, 20, 1)
 ```
+
 The GENERATESERIES() function generates values for us. The output is a desirable table, but we need to do one last operation to rename the Values column to ID.
 
 - Replace the previous expression with the following expression, then press Enter:
+
 ```Sequential Numbers =
 SELECTCOLUMNS(
     GENERATESERIES(1, 20, 1)
     , "ID"
     , [Value]
     )
-    ```
+ ```
+    
     In the preceding scenario, we used a virtual table to create a calculated table. In the following scenario, we demonstrate the usage of virtual tables in a measure.
 
  ####  Using virtual tables in a measure – Part 1
@@ -165,3 +168,14 @@ SUMX(
     )
     
  ```
+
+Analyzing the preceding calculation helps us to understand the power of virtual tables much better:
+
+ - The virtual table here has only one column, which is CustomerKey. Remember, this column is only accessible within the current calculation.
+ - Then, we use the FILTER() function to filter the results of VALUES() only to show the customer keys that have more than 4 orders for products with a list price of more than $1,000.
+ - Last, we sum all those quantities for the results of FILTER().
+
+As stated earlier, we can use all DAX functions that return a table value to create virtual tables. However, the functions in the following table are the most common ones:
+
+![image](https://user-images.githubusercontent.com/118057504/236339075-966246ee-7424-43bf-b08a-db0b83f4c110.png)
+
