@@ -1,4 +1,7 @@
-# Expert Data Modeling with Power BI - Second Edition
+# Expert Data Modeling with Power BI - Second Edition 
+https://subscription.packtpub.com/book/data/9781803246246/3/ch03lvl1sec11/summary
+
+
 ## Introduction to Data Modeling in Power BI
 
 ### Understanding the Power BI layers
