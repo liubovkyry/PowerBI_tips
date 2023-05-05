@@ -199,7 +199,7 @@ FILTER('Product' //Virtual table start
  - ![image](https://user-images.githubusercontent.com/118057504/236340475-465e7c7d-8b5e-42a8-9f9d-f36d0332be24.png)
  - In DAX Studio, you can run DAX queries, which must start with the EVALUATE statement.
 
-#### Time intelligence and data modeling
+<!-- #### Time intelligence and data modeling
 Detecting valid dates in the date dimension
 When dealing with periodic calculations in time intelligence, it is often hard to get just valid dates to show in the visuals.
 
@@ -267,4 +267,4 @@ TOTALMTD(
 
 ```
 
-The SAMEPERIODLASTYEAR('Date'[Full Date])and DATEADD('Date'[Full Date], -1, YEAR) act the same. We used different functions to demonstrate the possibilities.
+The SAMEPERIODLASTYEAR('Date'[Full Date])and DATEADD('Date'[Full Date], -1, YEAR) act the same. We used different functions to demonstrate the possibilities. -->
