@@ -197,4 +197,71 @@ FILTER('Product' //Virtual table start
  - In DAX Studio, you can run DAX queries, which must start with the EVALUATE statement.
 
 #### Time intelligence and data modeling
+Detecting valid dates in the date dimension
+When dealing with periodic calculations in time intelligence, it is often hard to get just valid dates to show in the visuals.
 
+Let's have a look at how to do this with a scenario.
+
+A business needs to see the following calculations:
+
+Internet Sales Month to Date (MTD)
+Internet Sales Last Month to Date (LMTD)
+Internet Sales Year to Date (YTD)
+Internet Sales Last Year to Date (LYTD)
+Internet Sales Last Year Month to Date (LY MTD)
+Writing the preceding measures is super easy using the existing DAX functions. The calculations are as follows.
+
+To calculate MTD, use the following DAX expressions:
+```
+Internet Sales MTD =
+TOTALMTD(
+    [Internet Sales]
+    , 'Date'[Full Date]
+)
+```
+
+Use the following DAX expressions to calculate LMTD:
+
+```
+Internet Sales LMTD =
+TOTALMTD(
+    [Internet Sales]
+    , DATEADD('Date'[Full Date], -1, MONTH)
+    )
+
+```
+
+Use the following DAX expressions to calculate YTD:
+
+```
+Internet Sales YTD =
+TOTALYTD(
+    [Internet Sales]
+    , 'Date'[Full Date]
+    )
+
+```
+
+Use the following DAX expressions to calculate LYTD:
+
+```
+Internet Sales LYTD =
+TOTALYTD (
+    [Internet Sales]
+    , DATEADD('Date'[Full Date], -1, YEAR)
+)
+
+```
+
+Finally, use the following DAX expressions to calculate LY MTD:
+
+```
+Internet Sales LY MTD =
+TOTALMTD(
+    [Internet Sales]
+    , SAMEPERIODLASTYEAR('Date'[Full Date])
+)
+
+```
+
+The SAMEPERIODLASTYEAR('Date'[Full Date])and DATEADD('Date'[Full Date], -1, YEAR) act the same. We used different functions to demonstrate the possibilities.
