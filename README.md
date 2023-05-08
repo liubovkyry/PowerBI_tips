@@ -369,6 +369,7 @@ Ignoring Power Query’s case sensitivity in data interactions can become an iss
 
 Queries
 In Power Query, a query contains expressions, variables, and values encapsulated by let and in statements. A let and in statement block is structured as follows:
+
 ```
 let  
    Variablename = expression1,  
@@ -376,6 +377,7 @@ let
 in   
    #"Variable name"
 ```
+
 As the preceding structure shows, we can have spaces in the variable names. However, we need to encapsulate the variable name using a number sign (#) followed by quotation marks—for example, #”Variable Name”. By defining a variable in a query, we create a query formula step in Power Query. Query formula steps can reference any previous steps. Lastly, the query output is the variable that comes straight after the in statement. Each step must end with a comma, except the last step before the in statement.
 
 Expressions
@@ -396,3 +398,38 @@ Structured values contain either primitive values or other structured values. Th
  
  ![image](https://user-images.githubusercontent.com/118057504/236884806-84fc332d-0968-40a1-a1d9-24d46887f353.png)
 
+ - Record value: A record is a set of fields that make up a row of data. To create a record, we use brackets []. Inside the brackets, we mention the field name and an equal sign followed by the field’s value. We separate different fields and their values using a comma, as follows:
+```
+
+[
+    First Name = "Soheil"
+    , Last Name = "Bakhshi"
+    , Occupation = "Consultant"
+    ]
+
+```
+
+The following image shows the expression and the values:
+
+![image](https://user-images.githubusercontent.com/118057504/236885593-84b77bd1-fcc6-40d0-b42f-008c3b6438d8.png)
+
+When defining a record, we do not need to put the field names in quotation marks. As illustrated in the previous image, records are shown vertically.
+
+ - Table value: A table is a set of values organized into columns and rows. Each column must have a name. There are several ways to create a table using various Power Query functions. Nevertheless, we can construct a table from lists or records. Figure 3.5 shows two ways to construct a table, using the #table keyword shown in the next code snippet:
+Here is the first way to construct a table:
+
+```
+#table( {"ID", "Fruit Name"}, {{1, "Apple"}, {2, "Orange"}, {3, "Banana"}})
+```
+
+Here is the second way to construct a table:
+
+```
+#table( type table [ID = number, Fruit Name = text], {{1, "Apple"}, {2, "Orange"}, {3, "Banana"}} )
+```
+
+The following image shows the results:
+
+![image](https://user-images.githubusercontent.com/118057504/236886533-ef8bb3c5-38bd-41e8-aaa7-372fedfdf2fb.png)
+
+As you can see in the preceding image, we defined the column data types in the second construct, while in the first one, the column types are <b>any</b>.
