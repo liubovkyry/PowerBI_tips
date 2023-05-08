@@ -415,7 +415,7 @@ The following image shows the expression and the values:
 
 When defining a record, we do not need to put the field names in quotation marks. As illustrated in the previous image, records are shown vertically.
 
- - Table value: A table is a set of values organized into columns and rows. Each column must have a name. There are several ways to create a table using various Power Query functions. Nevertheless, we can construct a table from lists or records. Figure 3.5 shows two ways to construct a table, using the #table keyword shown in the next code snippet:
+ - Table value: A table is a set of values organized into columns and rows. Each column must have a name. There are several ways to create a table using various Power Query functions. Nevertheless, we can construct a table from lists or records. Figure 3.5 shows two ways to construct a table, using the <i>#table</i> keyword shown in the next code snippet:
 Here is the first way to construct a table:
 
 ```
@@ -433,3 +433,30 @@ The following image shows the results:
 ![image](https://user-images.githubusercontent.com/118057504/236886533-ef8bb3c5-38bd-41e8-aaa7-372fedfdf2fb.png)
 
 As you can see in the preceding image, we defined the column data types in the second construct, while in the first one, the column types are <b>any</b>.
+
+ - Function value: A function is a value that accepts input parameters and produces a result. To create a function, we put the list of <i>parameters</i> (if any) in <i>parentheses</i>, followed by the output <i>data type</i>. We use <i>the goes-to symbol (=>)</i>, followed by the function’s definition. For instance, the following function calculates the end-of-month date for the current date:
+ 
+```
+()as date => Date.EndOfMonth(Date.From(DateTime.LocalNow()))
+```
+
+The preceding function does not have any input parameters but produces an output. The following image shows a function invocation without parameters that returns the end-of-month date for the current date (today’s date): 
+
+![image](https://user-images.githubusercontent.com/118057504/236888747-8b62ed89-1396-47a7-a607-d22ca140cbb9.png)
+
+#### Introduction to Power Query Editor
+
+Applied Steps
+The Applied Steps contain the transformation steps applied to the selected query in sequential order. Each step usually references its previous step, but it is not always the case. We might create some steps referring to one of the previous steps or not referring to any steps at all. For example, we may want to take some operations over the current date. So we use the DateTime.LocalNow() function in a step without referring to any previous steps. The following options are available when right-clicking each transformation:
+
+ - Edit Settings: This option is enabled if there is a UI available for the selected transformation step.
+ - Rename: It is good to give each transformation step a meaningful name so we can quickly recognize what each step does. Use this option to rename the selected transformation step.
+ - Delete: Use this option to delete the selected transformation step.
+ - Delete Until End: Deletes the selected transformation step and all its following steps.
+ - Insert Step After: Inserts a new step after the selected step.
+ - Move before: Moves up the selected step.
+ - Move after: Moves down the selected step.
+ - Extract Previous: Creates a new query by moving all previous steps to the selected one and references the new query in the current query while keeping the selected step and all its following steps in the current query.
+ - View Native Query: When we connect to a relational database such as a SQL Server instance, Power Query tries to translate the expressions into the native query language supported by the source system, which is T-SQL for a SQL Server data source. This option is enabled if Power Query can translate the selected transformation step into the native query language. If the source system does not have any query languages or Power Query cannot translate the step into the native query language, then this option is disabled. We discuss the query folding concept in detail in Chapter 7, Data Preparation Common Best Practices.
+ - Diagnose: We can diagnose a query for performance tuning, analyzing query folding, and more. We look at query diagnostics in Chapter 7, Data Preparation Common Best Practices, in more detail.
+ - Properties: We can use this option to add some descriptions to the selected transformation step to explain what it does and how it works in more detail.
