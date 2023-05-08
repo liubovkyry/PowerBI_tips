@@ -120,14 +120,16 @@ We want to create a calculated table and name it Sequential Numbers with an ID c
  - Click New table from the Modeling tab.
  - Type the following DAX expression, then press Enter:
 
-```Sequential Numbers = GENERATESERIES(1, 20, 1)
+```
+Sequential Numbers = GENERATESERIES(1, 20, 1)
 ```
 
 The GENERATESERIES() function generates values for us. The output is a desirable table, but we need to do one last operation to rename the Values column to ID.
 
 - Replace the previous expression with the following expression, then press Enter:
 
-```Sequential Numbers =
+```
+Sequential Numbers =
 SELECTCOLUMNS(
     GENERATESERIES(1, 20, 1)
     , "ID"
@@ -198,6 +200,76 @@ FILTER('Product' //Virtual table start
  - Press F5 or click the Run button to run the query:
  - ![image](https://user-images.githubusercontent.com/118057504/236340475-465e7c7d-8b5e-42a8-9f9d-f36d0332be24.png)
  - In DAX Studio, you can run DAX queries, which must start with the EVALUATE statement.
+
+
+#### Understanding relationships in virtual tables
+
+When we think about tables in relational systems, we usually think about tables and their relationships. So far, we have learned about virtual tables. Now let us think about the relationships between virtual tables and other tables (either physical tables available in the data model or other virtual tables). As stated earlier, we create a virtual table by generating it, constructing it, or deriving it from an existing table within the data model. Moreover, there are some cases where we can create more than one virtual table to calculate results. 
+
+When it comes to virtual tables, there are two types of relationships:
+
+Suppose a virtual table has been derived from an existing physical table in the data model. There is a relationship between the virtual table and the original physical table, which is the so-called <b>lineage</b>.
+In some cases, we create more than one virtual table in a calculation. Then, we create relationships between those virtual tables programmatically. In some other cases, we might need to replace an existing relationship with a new one. This type of relationship is called a<b> virtual relationship</b>.
+
+Using virtual tables is an effective technique we can use on many occasions. A great example is when there is no relationship between two tables, and we cannot create a physical relationship between the two as the relationship is only legitimate in some business cases.
+
+Let’s look at more complex scenarios with multiple virtual tables with inter-virtual relationships. The business needs to calculate Internet Sales in USD. At the same time, there are several values in the Internet Sales table in other currencies.
+The model contains an Exchange Rates table. As per the scenario, the base currency is USD. That is why the AverageRate column is always 1 when Currency is USD. In other words, the Exchange Rates table contains all currency ratings for each day compared to USD. The following figure shows the Exchange Rates data:
+
+![image](https://user-images.githubusercontent.com/118057504/236799627-cf7448cc-c315-4bfc-8c4d-a86ab4082f1c.png)
+
+To calculate the internet sales in USD for a specific date, we need to find the relevant CurrencyKey for that specific date in the Exchange Rates table, then multiply the value of SalesAmount from the Internet Sales table by the value of AverageRate from the Exchange Rates table.
+
+The following measure caters to that:
+```
+Internet Sales USD =
+SUMX(
+    NATURALINNERJOIN (
+            SELECTCOLUMNS(
+                'Internet Sales'
+, "CurrencyKeyJoin", 'Internet Sales'[CurrencyKey] * 1
+                , "DateJoin", 'Internet Sales'[OrderDate] + 0
+                , "ProductKey", 'Internet Sales'[ProductKey]
+                , "SalesOrderLineNumber", 'Internet Sales'[SalesOrderLineNumber]
+                , "SalesOrderNumber", 'Internet Sales'[SalesOrderNumber]
+                , "SalesAmount", 'Internet Sales'[SalesAmount]
+                )
+            , SELECTCOLUMNS (
+                'Exchange Rates'
+                , "CurrencyKeyJoin", 'Exchange Rates'[CurrencyKey] * 1
+                , "DateJoin", 'Exchange Rates'[Date] + 0
+                , "AverageRate", 'Exchange Rates'[AverageRate]
+            )
+        )
+, [AverageRate] * [SalesAmount]
+)
+```
+![image](https://user-images.githubusercontent.com/118057504/236800123-14c94f6b-33a4-4c59-be0c-07b158008bbe.png)
+
+Looking at the Exchange Rates table, we see that the combination of the values of the CurrencyKey and Date columns ensures the uniqueness of the rows.
+
+As the preceding figure shows, we first create two virtual tables. We join those two virtual tables using two columns, the CurrencyKeyJoin and DateJoin columns. If you look at the construction of the two columns, you see the following:
+
+We added 0 days to 'Internet Sales'[OrderDate] to construct DateJoin for the virtual table derived from the Internet Sales table. We did the same to 'Exchange Rates'[Date] to construct DateJoin for the virtual table derived from the Exchange Rates table.
+We multiplied CurrencyKey by 1 to construct the CurrencyKeyJoin column in both virtual tables.
+
+
+At this stage, you may ask why we need to do any of this. The reason is purely to make the NATURALINNERJOIN() function work. The NATURALINNERJOIN() function, as its name implies, performs an inner join of a table with another table using the same column names with the same data type and the same lineage.
+
+We want to perform an inner join between the two virtual tables based on the following columns:
+
+'Internet Sales'[OrderDate] → 'Exchange Rates'[Date]
+'Internet Sales'[CurrencyKey] → 'Exchange Rates'[CurrencyKey]
+
+The first requirement for the NATURALINNERJOIN() function is to have the same column names in both joining tables. To meet that requirement, we renamed both the OrderDate column from the Internet Sales table and the Date column from the Exchange Rates table to DateJoin.
+
+The second requirement is that the columns participating in the join must have the same data type. We already meet this requirement.
+The last requirement, which is the most confusing one yet, is that the columns contributing to the join must have the same lineage if there is a physical relationship between the two tables. If there is no physical relationship between the tables, the columns participating in the join must not have lineage to any physical columns within the data model. Therefore, we need to break the lineage of the join columns. Otherwise, the NATURALINNERJOIN() function does not work. We need to use an expression rather than an actual column name to break the lineage. Therefore, we add 0 days to 'Internet Sales'[OrderDate] and multiply 'Exchange Rates'[CurrencyKey] by 1 to break the lineage of those two columns.
+
+Finally, we have the desired result set, so we can multiply [SalesAmount] by [AverageRate] to get the sales amount in USD.
+
+The following figure shows the Internet Sales (without considering the exchange rates) and Internet Sales USD measures side by side:
+![image](https://user-images.githubusercontent.com/118057504/236800872-6c4cbed8-023e-4d66-9040-b20aa0eaf1a0.png)
 
 <!-- #### Time intelligence and data modeling
 Detecting valid dates in the date dimension
