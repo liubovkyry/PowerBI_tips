@@ -340,3 +340,59 @@ TOTALMTD(
 ```
 
 The SAMEPERIODLASTYEAR('Date'[Full Date])and DATEADD('Date'[Full Date], -1, YEAR) act the same. We used different functions to demonstrate the possibilities. -->
+
+### Data Preparation in Query Editor
+
+#### Introducing the Power Query M formula language in Power BI
+
+Power Query is a data preparation technology offering from Microsoft to connect to many different data sources from various technologies, enabling businesses to integrate data, transform it, make it available for analysis, and get meaningful insights from it. Power Query can currently connect to many data sources.
+
+It also provides a custom connectors software development kit (SDK) that third parties can use to create their data connectors.
+
+https://learn.microsoft.com/en-us/power-query/power-query-what-is-power-query?WT.mc_id=DP-MVP-5003466#where-can-you-use-power-query
+
+Power Query M is a formula language capable of connecting to various data sources to mix and match the data between those data sources, which then loads into a single dataset. In this section, we introduce Power Query M.
+
+#### Power Query is CaSe-SeNsItIvE
+While Power Query is a case-sensitive language, Data Analysis Expressions (DAX) is not.
+Not only is Power Query case-sensitive in terms of syntax, but it is also case-sensitive when interacting with data. For instance, we get an error message if we run the following function:
+```
+datetime.localnow()
+```
+
+This is because the following is the correct syntax:
+```
+DateTime.LocalNow()
+```
+
+Ignoring Power Query’s case sensitivity in data interactions can become an issue that is hard and time-consuming to identify. A real-world example is when we get globally unique identifier (GUID) values from a data source containing lowercase characters. Then, we get some other GUID values from another data source with uppercase characters. When we match the values in Power Query to merge two queries, we do not get any matching values. But if we turn the lowercase GUID into uppercase, the values match.
+
+Queries
+In Power Query, a query contains expressions, variables, and values encapsulated by let and in statements. A let and in statement block is structured as follows:
+```
+let  
+   Variablename = expression1,  
+   #"Variable name" = expression2  
+in   
+   #"Variable name"
+```
+As the preceding structure shows, we can have spaces in the variable names. However, we need to encapsulate the variable name using a number sign (#) followed by quotation marks—for example, #”Variable Name”. By defining a variable in a query, we create a query formula step in Power Query. Query formula steps can reference any previous steps. Lastly, the query output is the variable that comes straight after the in statement. Each step must end with a comma, except the last step before the in statement.
+
+Expressions
+In Power Query, an expression is a formula that results in values. For instance, the following image shows some expressions and their resulting values:
+
+![image](https://user-images.githubusercontent.com/118057504/236884377-941d929c-e876-466d-ad50-5864a82707d0.png)
+
+Values
+
+In Power Query, values fall into two general categories: primitive values and structured values.
+
+Primitive values
+A primitive value is a constant value such as a number, a text, a null, and so on. For instance, 123 is a primitive number value, while "123" (including quotation marks) is a primitive text value.
+
+Structured values
+Structured values contain either primitive values or other structured values. There are four kinds of structured values: list, record, table, and function values:
+ - List value: A list is a sequence of values shown in only one column. We can define a list value using curly brackets {}. For instance, we can create a list of lowercase English letters using {"a".."z"} or a list of numbers between 1 and 10 by using {1..10}. The following image shows the list of English letters from a to z:
+ 
+ ![image](https://user-images.githubusercontent.com/118057504/236884806-84fc332d-0968-40a1-a1d9-24d46887f353.png)
+
