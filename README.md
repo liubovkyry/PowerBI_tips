@@ -460,3 +460,78 @@ The Applied Steps contain the transformation steps applied to the selected query
  - View Native Query: When we connect to a relational database such as a SQL Server instance, Power Query tries to translate the expressions into the native query language supported by the source system, which is T-SQL for a SQL Server data source. This option is enabled if Power Query can translate the selected transformation step into the native query language. If the source system does not have any query languages or Power Query cannot translate the step into the native query language, then this option is disabled. We discuss the query folding concept in detail in Chapter 7, Data Preparation Common Best Practices.
  - Diagnose: We can diagnose a query for performance tuning, analyzing query folding, and more. We look at query diagnostics in Chapter 7, Data Preparation Common Best Practices, in more detail.
  - Properties: We can use this option to add some descriptions to the selected transformation step to explain what it does and how it works in more detail.
+
+#### Understanding query parameters
+One of the most valuable features is the ability to define query parameters. We can then use defined query parameters in various cases. For instance, we can create a query referencing a parameter to retrieve data from different datasets, or we can parameterize filter rows. With query parameters, we can parameterize the following:
+
+ - Data Source
+ - Filter Rows
+ - Keep Rows
+ - Remove Rows
+ - Replace Rows
+In addition, we can load the parameters’ values into the data model to reference them from measures, calculated columns, calculated tables, and report elements if necessary.
+
+We can easily define a query parameter from Power Query Editor, as follows:
+
+1 Click Manage Parameters.
+2 Click New.
+3 Enter a name.
+4 Type in an informative description that helps the user understand the parameter’s purpose.
+5 Checking the Required box makes the parameter mandatory.
+6 Select a type from the drop-down list.
+7 Select a value from the Suggested Values drop-down list.
+8 Depending on the suggested values selected in the previous step, you may need to enter some values (this is shown in Figure 3.35). If you selected Query from the Suggested Values drop-down list, we need to select a query in this step.
+9 Again, depending on the selected suggested values, we may/may not see the default value. If we selected List of values, we need to pick a default value.
+10 Pick or enter a value for Current Value.
+11 Click OK.
+The preceding steps are illustrated in the following image:
+
+![image](https://user-images.githubusercontent.com/118057504/236935405-2b220737-530f-4d86-b500-9a718bf98718.png)
+
+<b>Note:</b> It is best practice to avoid hardcoding the data sources by parameterizing them. Some organizations consider their data source names and connection strings as sensitive data. They only allow PBIT files to be shared within the organization or with third-party tools, as PBIT files do not contain data. So, if the data sources are not parameterized, they can reveal server names, folder paths, SharePoint Uniform Resource Locators (URLs), and so on. Using query parameters with Suggested Values of Any value makes perfect sense to avoid data leakage.
+
+The number of use cases for query parameters is quite vast. Let’s look at a real-world scenario when using query parameters comes in handy.
+
+In this scenario, we want to parameterize the data sources. Parameterizing a data source is helpful. One of the most significant benefits of parameterizing data sources is avoiding hardcoding the server names, database names, files, folder paths, and so on.
+
+The business has a specific BI governance framework requiring separate Development (Dev), User Acceptance Testing (UAT), and Production (Prod) environments. The business wants us to produce a sales analysis report on top of the enterprise data warehouse in SQL Server. We have three different servers, one for each environment, hosting the data warehouse. While a Power BI report is in the development phase, it must connect to the Dev server to get the data from the Dev database. When the report is ready for testing in the UAT environment, we must switch both the server and the database to the UAT environment. When the UAT people have done their testing, and the report is ready to go live, we need to switch the server and the database again to point to the Prod environment. To implement this scenario, we need to define two query parameters. One keeps the server names, and the other keeps the database names. Then, we set all relevant queries to use those query parameters. It is much easier to implement such a scenario if we use the query parameters from the beginning of the project. The process is easy even if there is currently an existing Power BI report, and we must parameterize the data sources. Once we set it, we do not need to change any code in the future to switch between different environments. Let’s create a new query parameter as follows:
+
+1 In Power Query Editor, click Manage Parameters.
+2 Click New.
+3 Enter the parameter name as Server Name.
+4 Type in a description.
+5 Check the Required field
+6 Select the Type as Text from the drop-down list.
+7 Select List of values from the Suggested Values drop-down list.
+8 Enter the server names in the list.
+9 Select devsqlsrv01\edw as the Default Value.
+10 Pick devsqlsrv01\edw again as the Current Value.
+11 Click OK.
+
+The following image highlights the preceding steps:
+
+![image](https://user-images.githubusercontent.com/118057504/236936011-c5674350-079f-4899-acba-45f9975962d7.png)
+
+
+If we already have some queries, then we need to modify the data sources as follows:
+
+1 Click a query to parameterize.
+2 Click the gear icon of the first step, Source.
+3 Select Parameter from the Server dropdown.
+4 Select the Server Name parameter from the Server parameters dropdown.
+5 Select Parameter again from the Database dropdown.
+6 Select the Database Name parameter from the database parameters dropdown.
+7 Click OK.
+
+![image](https://user-images.githubusercontent.com/118057504/236937416-db0caddf-c929-4244-9889-6f8346f49570.png)
+
+We need to go through similar steps to parameterize other queries. After finishing the parameterization, we only need to change the parameters’ values whenever we want to switch the data sources. To do so from Power Query Editor, proceed as follows:
+
+1 Click the Manage Parameters drop-down button.
+2 Click Edit Parameters.
+3 Select the UAT Server Name.
+4 Select the UAT Database Name.
+5 Click OK.
+
+![image](https://user-images.githubusercontent.com/118057504/236937625-df0409d9-b0dd-4cfd-87df-ddb8ee7ac442.png)
+
